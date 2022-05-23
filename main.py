@@ -1,6 +1,8 @@
 import time
+import enemy, fleet
 import cv2
 import numpy as np
+import math
 from matplotlib import pyplot as plt
 import pyautogui
 import mouse
@@ -25,10 +27,7 @@ def randomClickInBox(enemy): #enemy is a list [x1,y1,x2,y2]
     cv2.imwrite('res.png',frame)
     #hi
 
-
-
-def mapScreenModule():
-    frame = capture_image()
+def findEnemies(frame):
     enemyLocation = []
     template = cv2.imread('templates/LV snip.png', 0)
     w, h = template.shape[::-1]
@@ -79,16 +78,57 @@ def fleetLocation(frame): #current frame needs to be passed in as this should be
 
     return fleetLocation #may want to add the fleet's click box as a rectangle on to the image later on, could cause slower computation
 
-def nearestEnemy(enemies, frame): #needs game screenshot (frame) as well
+def myFunc(enemy):
+    return enemy.distance
+def sort(enemyDistanceList): #sort enemies by nearest to closest
+    returnedList = sort(enemyDistanceList,key = myFunc)
+    return returnedList
+
+def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enemies should also have an unreachable state
+    #enemies are determined by how close they are by pythagorean theorem
     print("hewwowo oworldwo!")
-    fleetLocation
-    fleetX = fleetLocation[0]
-    fleetY = fleetLocation[1]
-    for enemy in enemies:
-        enemyX = enemy[0]
-        enemyY = enemy[1]
+    enemyDistanceList = []
+    fleetX = fleetLoc[0]
+    fleetY = fleetLoc[1]
+    template = cv2.imread('templates/LV snip.png', 0)
+    w, h = template.shape[::-1]
+    for enemyCoord in enemies:
+        enemyX = enemyCoord[0]
+        enemyY = enemyCoord[1]
+        coords = [enemyX,enemyY,enemyX+w,enemyY+h]
+        tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
+        tempEnemy = enemy(tempDistance,coords)
+        enemyDistanceList.append(tempEnemy)
+    enemyDistanceList = sort(enemyDistanceList)
+    return enemyDistanceList
 
+def nearestEnemy(allEnemies, fleetLocation): #only returns enemies that can be reached
+    enemyDistanceList = sort(allEnemies)
+    count = 0
+    for enemy in enemyDistanceList:
+        if(enemy.reachable):
+            randomClickInBox(allEnemies[count]) #click closest and reachable enemy
+            break
+        count += 1
 
+def moveFleet(frame): #moves fleet towards closest enemy if unreachable in that turn
+    #this is too hard to think about so i'll do it later
+    print("hewowowowowo worldowowo")
+
+def fightEnemy():
+    frame = capture_image()
+    enemies = findEnemies(frame)
+    fleetLoc = fleetLocation(frame)
+    enemyDistance = orderEnemies(enemies,fleetLoc)
+    count = 0
+    while True:
+        if enemyDistance[count].reachable:
+            randomClickInBox(enemyDistance[count].coords)
+            break
+        count += 1
+
+def scroll():
+    #a for right, d for left, w for down, s for up
 print("Please bring up azur lane screen")
 #time.sleep(5) #uncomment this when on a single monitor
 frame = capture_image()
