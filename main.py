@@ -84,6 +84,7 @@ def sort(enemyDistanceList): #sort enemies by nearest to closest
     returnedList = sort(enemyDistanceList,key = myFunc)
     return returnedList
 
+
 def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enemies should also have an unreachable state
     #enemies are determined by how close they are by pythagorean theorem
     print("hewwowo oworldwo!")
@@ -272,6 +273,7 @@ def scroll(direction,holdTime): #hold time is in seconds
     pyautogui.keyDown(direction)
     time.sleep(holdTime)
     pyautogui.keyUp(direction)
+
 print("Please bring up azur lane screen")
 #time.sleep(5) #uncomment this when on a single monitor
 frame = capture_image()
