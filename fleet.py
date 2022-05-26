@@ -1,7 +1,6 @@
 class fleet:
-    def __init__(self, oilCost, fleetName):
+    def __init__(self, fleetName):
         self.ammo = 5
-        self.oilCost = oilCost
         self.fleetName = fleetName
 
     def useAmmo(self):

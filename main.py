@@ -1,5 +1,6 @@
 import time
-import enemy, fleet
+from Enemy import Enemy
+from fleet import fleet
 import cv2
 import numpy as np
 import math
@@ -16,7 +17,7 @@ def capture_image():
     return img_gray
 
 def randomClickInBox(obj): #obj is a list [x1,y1,x2,y2] literally a box
-    print(obj)
+    #print(obj)
     obj = obj[0]
     frame = capture_image()
     cv2.rectangle(frame, (obj[0],obj[1]), (obj[2], obj[3]), (255,0,0), 2)
@@ -36,21 +37,18 @@ def findEnemies(frame):
     loc = np.where( res >= threshold)
 
     for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0],pt[1], pt[0] + 50, pt[1] + 50])
-        #print(type(pt))
-        enemyLocation.append(temp)
+        enemyLocation.append([pt[0],pt[1], pt[0] + 50, pt[1] + 50])
         cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
 
     cv2.imshow('result',frame)
     '''for enemy in enemyLocation:
         print(enemy)'''
-    print(len(enemyLocation))
+    #print(len(enemyLocation))
     return enemyLocation
 
 def buttonLoc(frame): #current frame needs to be passed in as this should be in nearestEnemy and nearestEnemy needs the frame as well
     #must be careful in using this as moving to the enemy will also pop up the green locator
-    print("got here!")
+    #print("got here!")
     template = cv2.imread('templates/fleetLocator.png', 0)
     w, h = template.shape[::-1]
     buttonLoc = None
@@ -60,19 +58,17 @@ def buttonLoc(frame): #current frame needs to be passed in as this should be in 
     loc = np.where(res >= threshold)
     while loc[0].size == 0:
         threshold -= 0.01
-        print("running")
+        #print("running")
         res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
         loc = np.where(res >= threshold)
-        print(type(loc[0]))
+        #print(type(loc[0]))
 
-    print("got here!")
+    #print("got here!")
     buttonLoc = []
-    for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0]-25,pt[1]+225, pt[0] + 35, pt[1] + 250]) #this should be the proper adjustment for the marker
-        buttonLoc.append(temp)
+    for pt in zip(*loc[::-1]): #this should be the proper adjustment for the marker
+        buttonLoc.append([pt[0]-25,pt[1]+225, pt[0] + 35, pt[1] + 250])
         cv2.rectangle(frame, (pt[0]-15,pt[1]+225), (pt[0] + 35, pt[1] + 250), (0, 0, 255), 2)
-    print(len(buttonLoc))
+    #print(len(buttonLoc))
 
     cv2.imwrite('res.png', frame) #comment this line when not debugging
 
@@ -89,18 +85,21 @@ def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enem
     #enemies are determined by how close they are by pythagorean theorem
     print("hewwowo oworldwo!")
     enemyDistanceList = []
-    fleetX = fleetLoc[0]
-    fleetY = fleetLoc[1]
+    fleetX = fleetLoc[0][0]
+    fleetY = fleetLoc[0][1]
     template = cv2.imread('templates/LV snip.png', 0)
     w, h = template.shape[::-1]
+    print(enemies)
     for enemyCoord in enemies:
+        print(enemyCoord)
         enemyX = enemyCoord[0]
         enemyY = enemyCoord[1]
         coords = [enemyX,enemyY,enemyX+w,enemyY+h]
+        print(coords)
         tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
-        tempEnemy = enemy(tempDistance,coords)
-        enemyDistanceList.append(tempEnemy)
+        enemyDistanceList.append(Enemy(tempDistance,coords))
     enemyDistanceList = sort(enemyDistanceList)
+    print("successfully ordered enemies")
     return enemyDistanceList
 
 def nearestEnemy(allEnemies, buttonLoc): #only returns enemies that can be reached
@@ -121,12 +120,13 @@ def findBoss(frame):
     template = cv2.imread('templates/LV snip.png', 0)
     w, h = template.shape[::-1]
     threshold = 0.9  # 90% threshold, quite high but we can decrease from there
+    loc = [[],[]]
     while loc[0].size == 0 and threshold >= 0.6:
         threshold -= 0.01
-        print("running")
+        #print("running")
         res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
         loc = np.where(res >= threshold)
-        print(type(loc[0]))
+        ##print(type(loc[0]))
 
     if(loc[0].size == 0):
         return False
@@ -162,27 +162,46 @@ def switchFleet(frame):
         temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])  # this should be the proper adjustment for the marker
         buttonLoc.append(temp)
         cv2.rectangle(frame, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-    print(len(buttonLoc))
+    #print(len(buttonLoc))
     randomClickInBox(buttonLoc[0])
 
 def combatModule():
-    frame = capture_image()
-    enemies = findEnemies(frame)
-    fleetLoc = buttonLoc(frame)
-    enemyDistance = orderEnemies(enemies,fleetLoc)
     count = 0
+    frame = capture_image()
+    switchFleet(frame) #switches to mob fleet
+    currentAmmoCount = 5
     while True:
-        if(findBoss(frame) != False):
-            randomClickInBox(findBoss(frame))
-            clickBattle(frame)
-            break
-        if enemyDistance[count].reachable:
-            randomClickInBox(enemyDistance[count].coords)
-            clickBattle(frame)
-            time.sleep(12)
-
-            break
-        count += 1
+        if(currentAmmoCount < 1):
+            switchFleet(frame)
+            currentAmmoCount = 5
+        time.sleep(0.5)
+        frame = capture_image()
+        enemies = findEnemies(frame)
+        print(enemies)
+        fleetLoc = buttonLoc(frame)
+        print(fleetLoc)
+        enemyDistance = orderEnemies(enemies,fleetLoc)
+        print(enemyDistance)
+        while True:
+            try:
+                findBoss(frame)
+                randomClickInBox(findBoss(frame))
+                clickBattle(frame)
+                return True
+            except:
+                randomClickInBox(enemyDistance[count].coords)
+                clickBattle(frame)
+                currentAmmoCount -= 1
+                time.sleep(12)
+                break
+            count += 1
+        while True:
+            frame = capture_image()
+            try:
+                continueFromBattleScreen(frame)
+                time.sleep(1)
+            except:
+                continue
 
 def clickBattle(frame):
     buttonLoc = []
@@ -275,15 +294,12 @@ def scroll(direction,holdTime): #hold time is in seconds
     pyautogui.keyUp(direction)
 
 print("Please bring up azur lane screen")
-#time.sleep(5) #uncomment this when on a single monitor
-frame = capture_image()
-#buttonLoc(frame)
-#clickBattle(frame)
-continueFromBattleScreen(frame)
+#time.sleep(2) #uncomment this when on a single monitor
+print(combatModule())
+enemy = Enemy(100, [10,10,20,20])
+print(enemy.distance)
 
 print("done")
-'''enemies = mapScreenModule()
-randomClickInBox(enemies[0])'''
 
 
 '''img_rgb = cv.imread('testPhotos/4.png')

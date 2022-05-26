@@ -1,4 +1,4 @@
-class enemy:
+class Enemy:
     def __init__(self, distance,coords):
         self.reachable = True
         self.distance = distance
