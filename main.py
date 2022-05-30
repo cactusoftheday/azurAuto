@@ -93,7 +93,7 @@ def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enem
         #print(enemyCoord)
         enemyX = enemyCoord[0]
         enemyY = enemyCoord[1]
-        coords = [enemyX,enemyY,enemyX+w,enemyY+h]
+        coords = [enemyX,enemyY-h,enemyX+w,enemyY]
         #print(coords)
         tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
         enemyDistanceList.append(Enemy(tempDistance,coords))
@@ -101,6 +101,7 @@ def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enem
     enemyDistanceList = sortE(enemyDistanceList)
     #print("successfully ordered enemies")
     #print(enemyDistanceList)
+
     return enemyDistanceList
 
 def nearestEnemy(allEnemies, buttonLoc): #only returns enemies that can be reached
@@ -174,11 +175,13 @@ def combatModule():
     switchFleet(frame) #switches to mob fleet
     currentAmmoCount = 5
     while True:
+        scanAgain = False
         count = 0
         if(currentAmmoCount < 1):
+            print("switching fleets")
             switchFleet(frame)
             currentAmmoCount = 5
-        time.sleep(0.5)
+        time.sleep(2.5)
         frame = capture_image()
         enemies = findEnemies(frame)
         #print(enemies)
@@ -189,7 +192,7 @@ def combatModule():
         coord = findBoss(frame)
         while True:
             try:
-                print("boss corrdinates:",coord)
+                print("boss coordinates:",coord)
                 if(not coord):
                     raise Exception("boss not found")
                 randomClickInBox(coord)
@@ -197,27 +200,49 @@ def combatModule():
                 clickBattle(frame)
                 while True:
                     frame = capture_image()
+                    print("trying to find continue screen")
                     try:
                         continueFromBattleScreen(frame)
                         time.sleep(1)
-                        break
                     except:
+                        print("couldn't find continue screen")
+                        time.sleep(1)
                         continue
+                    break
                 return True
             except:
+                if(len(enemyDistance) == 0):
+                    scroll("up",0.7)
+                    time.sleep(1)
+                    scanAgain = True
+                    break
+                print("enemies sorted by distance:",enemyDistance)
                 print("enemy coords",enemyDistance[count].coords)
-                randomClickInBox(enemyDistance[count].coords)
-                clickBattle(frame)
-                currentAmmoCount -= 1
-                time.sleep(12)
+                cv2.rectangle(frame,(enemyDistance[count].coords[0],enemyDistance[count].coords[1]),(enemyDistance[count].coords[2],enemyDistance[count].coords[3]),(0,0,255), 2)
+                cv2.imwrite('enemy.png', frame)
+                while(True):
+                    if(count >= len(enemyDistance)):
+                        return False
+                    if(enemyDistance[count].reachable):
+                        randomClickInBox([enemyDistance[count].coords])
+                        time.sleep(2)
+                        clickBattle(capture_image())
+                        currentAmmoCount -= 1
+                        time.sleep(12)
+                        break
+                    else:
+                        print("enemy not reachable")
+                        count += 1
+                        continue
                 break
             count += 1
         while True:
+            if(scanAgain):
+                break
             frame = capture_image()
             try:
                 continueFromBattleScreen(frame)
                 time.sleep(1)
-
                 break
             except:
                 continue
@@ -313,8 +338,9 @@ def scroll(direction,holdTime): #hold time is in seconds
     pyautogui.keyUp(direction)
 
 print("Please bring up azur lane screen")
-#time.sleep(2) #uncomment this when on a single monitor
-print(combatModule())
+time.sleep(2) #uncomment this when on a single monitor
+#print(combatModule())
+clickBattle(capture_image())
 enemy = Enemy(100, [10,10,20,20])
 print(enemy.distance)
 
