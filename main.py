@@ -76,8 +76,8 @@ def buttonLoc(frame): #current frame needs to be passed in as this should be in 
 
 def myFunc(enemy):
     return enemy.distance
-def sort(enemyDistanceList): #sort enemies by nearest to closest
-    returnedList = sort(enemyDistanceList,key = myFunc)
+def sortE(enemyDistanceList): #sort enemies by nearest to closest
+    returnedList = enemyDistanceList.sort(key = myFunc)
     return returnedList
 
 
@@ -98,12 +98,12 @@ def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enem
         print(coords)
         tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
         enemyDistanceList.append(Enemy(tempDistance,coords))
-    enemyDistanceList = sort(enemyDistanceList)
+    enemyDistanceList = sortE(enemyDistanceList)
     print("successfully ordered enemies")
     return enemyDistanceList
 
 def nearestEnemy(allEnemies, buttonLoc): #only returns enemies that can be reached
-    enemyDistanceList = sort(allEnemies)
+    enemyDistanceList = sortE(allEnemies)
     count = 0
     for enemy in enemyDistanceList:
         if(enemy.reachable):
