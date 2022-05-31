@@ -339,8 +339,8 @@ def scroll(direction,holdTime): #hold time is in seconds
 
 print("Please bring up azur lane screen")
 time.sleep(2) #uncomment this when on a single monitor
-#print(combatModule())
-clickBattle(capture_image())
+print(combatModule())
+#clickBattle(capture_image())
 enemy = Enemy(100, [10,10,20,20])
 print(enemy.distance)
 
