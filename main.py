@@ -1,4 +1,7 @@
 import time
+
+import numpy
+
 from Enemy import Enemy
 from fleet import fleet
 import cv2
@@ -8,21 +11,20 @@ from matplotlib import pyplot as plt
 import pyautogui
 import mouse
 from random import randrange
+import tensorflow as tf
 #need 2 taps and one confirm button to end battle
 # Resizes an image and maintains aspect ratio
 
-def capture_image():
-    img_rgb = pyautogui.screenshot()
+def capture_image(img_rgb):
     img_gray = cv2.cvtColor(np.array(img_rgb),cv2.COLOR_BGR2GRAY)
     return img_gray
 
-def randomClickInBox(obj): #obj is a list [x1,y1,x2,y2] literally a box
-    print("obj", obj)
-    obj = obj[0]
+def randomClickInBox(obj): #obj is a list [(x1,y1),(x2,y2)] literally a box
     #frame = capture_image()
     #cv2.rectangle(frame, (obj[0],obj[1]), (obj[2], obj[3]), (255,0,0), 2)
-    randx = randrange(obj[0],obj[2])
-    randy = randrange(obj[1],obj[3])
+    randx = randrange(obj[0][0],obj[1][0])
+    randy = randrange(obj[0][1],obj[1][1])
+    print(randx , randy)
     mouse.move(randx,randy,True)
     mouse.click(button="left")
     #cv2.imwrite('res.png',frame)
@@ -93,7 +95,7 @@ def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enem
         #print(enemyCoord)
         enemyX = enemyCoord[0]
         enemyY = enemyCoord[1]
-        coords = [enemyX,enemyY-h,enemyX+w,enemyY]
+        coords = [enemyX,enemyY,enemyX+w,enemyY+h]
         #print(coords)
         tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
         enemyDistanceList.append(Enemy(tempDistance,coords))
@@ -101,7 +103,6 @@ def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enem
     enemyDistanceList = sortE(enemyDistanceList)
     #print("successfully ordered enemies")
     #print(enemyDistanceList)
-
     return enemyDistanceList
 
 def nearestEnemy(allEnemies, buttonLoc): #only returns enemies that can be reached
@@ -117,6 +118,28 @@ def moveFleet(frame): #moves fleet towards closest enemy if unreachable in that 
     #this is too hard to think about so i'll do it later
     print("hewowowowowo worldowowo")
 
+def find(frame, templateName, thresholdVar):
+    #should return an array
+    loc = np.array([])
+    threshold = thresholdVar
+    template = cv2.imread('templates/' + templateName + '.png', 0)
+    w, h = template.shape[::-1]
+    while True:
+        threshold -= 0.01
+        print("finding")
+        res = cv2.matchTemplate(frame, template,cv2.TM_CCOEFF_NORMED)
+        loc = np.where(res >= threshold)
+        if(loc[0].size > 0 or threshold <= 0.6):
+            break
+    if(loc[0].size == 0):
+        #did not find object
+        print("did not find ", templateName)
+        return []
+    for pt in zip(*loc[::-1]):
+        print(pt)
+    return [pt,w,h]
+
+
 def findBoss(frame):
     bossLocation = []
     template = cv2.imread('templates/bossTemplate.png', 0)
@@ -130,7 +153,7 @@ def findBoss(frame):
         res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
         loc = np.where(res >= threshold)
         print(loc)
-        if (loc[0].size > 0 or threshold <= 0.6):
+        if (loc[0].size > 0 or threshold <= 0.8):
             break
 
     if(loc[0].size == 0):
@@ -175,13 +198,11 @@ def combatModule():
     switchFleet(frame) #switches to mob fleet
     currentAmmoCount = 5
     while True:
-        scanAgain = False
         count = 0
         if(currentAmmoCount < 1):
-            print("switching fleets")
             switchFleet(frame)
             currentAmmoCount = 5
-        time.sleep(2.5)
+        time.sleep(0.5)
         frame = capture_image()
         enemies = findEnemies(frame)
         #print(enemies)
@@ -192,7 +213,7 @@ def combatModule():
         coord = findBoss(frame)
         while True:
             try:
-                print("boss coordinates:",coord)
+                print("boss corrdinates:",coord)
                 if(not coord):
                     raise Exception("boss not found")
                 randomClickInBox(coord)
@@ -200,49 +221,27 @@ def combatModule():
                 clickBattle(frame)
                 while True:
                     frame = capture_image()
-                    print("trying to find continue screen")
                     try:
                         continueFromBattleScreen(frame)
                         time.sleep(1)
+                        break
                     except:
-                        print("couldn't find continue screen")
-                        time.sleep(1)
                         continue
-                    break
                 return True
             except:
-                if(len(enemyDistance) == 0):
-                    scroll("up",0.7)
-                    time.sleep(1)
-                    scanAgain = True
-                    break
-                print("enemies sorted by distance:",enemyDistance)
                 print("enemy coords",enemyDistance[count].coords)
-                cv2.rectangle(frame,(enemyDistance[count].coords[0],enemyDistance[count].coords[1]),(enemyDistance[count].coords[2],enemyDistance[count].coords[3]),(0,0,255), 2)
-                cv2.imwrite('enemy.png', frame)
-                while(True):
-                    if(count >= len(enemyDistance)):
-                        return False
-                    if(enemyDistance[count].reachable):
-                        randomClickInBox([enemyDistance[count].coords])
-                        time.sleep(2)
-                        clickBattle(capture_image())
-                        currentAmmoCount -= 1
-                        time.sleep(12)
-                        break
-                    else:
-                        print("enemy not reachable")
-                        count += 1
-                        continue
+                randomClickInBox(enemyDistance[count].coords)
+                clickBattle(frame)
+                currentAmmoCount -= 1
+                time.sleep(12)
                 break
             count += 1
         while True:
-            if(scanAgain):
-                break
             frame = capture_image()
             try:
                 continueFromBattleScreen(frame)
                 time.sleep(1)
+
                 break
             except:
                 continue
@@ -337,15 +336,55 @@ def scroll(direction,holdTime): #hold time is in seconds
     time.sleep(holdTime)
     pyautogui.keyUp(direction)
 
-print("Please bring up azur lane screen")
-time.sleep(2) #uncomment this when on a single monitor
-print(combatModule())
-#clickBattle(capture_image())
-enemy = Enemy(100, [10,10,20,20])
-print(enemy.distance)
+def click(templateName):
+    img_rgb = cv2.cvtColor(numpy.array(pyautogui.screenshot()), cv2.COLOR_RGB2BGR)
+    img_gray = capture_image(img_rgb)
+    location = find(img_gray, templateName, 0.9)
+    print(location)
+    box = [location[0], (location[0][0] + location[1], location[0][1] + location[2])]
+    cv2.rectangle(img_rgb, box[0], box[1], (0, 0, 255), 2)
 
-print("done")
+    cv2.imwrite('res.png', img_rgb)
+    randomClickInBox(box)
 
+def tryClick(templateName):
+    try:
+        click(templateName)
+        return True
+    except:
+        print(templateName + " could not be found")
+        return False
+
+def campaignAuto(counter):
+    time.sleep(3)
+    while True:
+        if(tryClick('go')):
+            break
+        time.sleep(2)
+    time.sleep(5)
+    while True:
+        if(tryClick('go2')):
+            break
+        time.sleep(2)
+    #long wait time
+    waitTime = 14 #wait time is intially 14 seconds
+    count = counter
+    while count > 1:
+        while True:
+            time.sleep(waitTime)
+            if(tryClick('continue')):
+                waitTime = 14
+                break
+            if(waitTime > 2):
+                waitTime -= 1
+        count -= 1
+    #end function
+
+if __name__ == "__main__":
+    sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    time.sleep(1)
+    #campaignAuto(3) #hardmode auto
 
 '''img_rgb = cv.imread('testPhotos/4.png')
 img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
