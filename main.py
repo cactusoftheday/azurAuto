@@ -133,7 +133,7 @@ def find(frame, templateName, thresholdVar):
             break
     if(loc[0].size == 0):
         #did not find object
-        print("did not find ", templateName)
+        print("did not find", templateName)
         return []
     for pt in zip(*loc[::-1]):
         print(pt)
@@ -315,7 +315,7 @@ def continueFromBattleScreen(frame):
     template = cv2.imread('templates/confirmButton.png', 0)
     w, h = template.shape[::-1]
     res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.8  # 60% threshold, could give false positives
+    threshold = 0.3  # 60% threshold, could give false positives
     loc = np.where(res >= threshold)
 
     for pt in zip(*loc[::-1]):
@@ -381,10 +381,11 @@ def campaignAuto(counter):
     #end function
 
 if __name__ == "__main__":
-    sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
-    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    #sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
+    #print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     time.sleep(1)
-    #campaignAuto(3) #hardmode auto
+    campaignAuto(3) #hardmode auto
+    #tryClick('continue')
 
 '''img_rgb = cv.imread('testPhotos/4.png')
 img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
