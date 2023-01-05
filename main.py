@@ -355,7 +355,7 @@ def tryClick(templateName):
         print(templateName + " could not be found")
         return False
 
-def campaignAuto(counter):
+def campaignAuto(counter, wait):
     time.sleep(3)
     while True:
         if(tryClick('go')):
@@ -373,7 +373,7 @@ def campaignAuto(counter):
         while True:
             time.sleep(waitTime)
             if(tryClick('continue')):
-                waitTime = 14
+                waitTime = wait
                 break
             if(waitTime > 2):
                 waitTime -= 1
@@ -384,7 +384,7 @@ if __name__ == "__main__":
     #sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
     #print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     time.sleep(1)
-    campaignAuto(3) #hardmode auto
+    campaignAuto(3, 14) #hardmode auto
     #tryClick('continue')
 
 '''img_rgb = cv.imread('testPhotos/4.png')
