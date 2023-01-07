@@ -18,6 +18,9 @@ As a player of Azur Lane, I am constantly on the lookout for new and powerful we
 <h3>Conditions to use
   <h4>There are template matching parts in this program and thus you will need to run this on PC and in an emulator that has 1600 x 900 resolution, otherwise some of the template matching stuff won't work. Also you may need to run your IDE as administrator due to the fact that controlling the mouse with the program needs administrator privileges. 
 <h2>
+  Graphs and stuff if you wanted to look at that
+  ![image](https://user-images.githubusercontent.com/20429572/211173767-6a77f9a6-b8cc-423f-9acb-93b00fd94ee2.png)
+
 Problems
 <h4>
 While performing the object detection transfer learning training, I ran into two problems. <br />
