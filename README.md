@@ -24,11 +24,13 @@ There are template matching parts in this program and thus you will need to run 
 
 While performing the object detection transfer learning training, I ran into two problems. <br />
 
-One, I did not have enough energy to create a good dataset for the model to train on. Total losses were extremely low which leads me to think that I might have overfitted the dataset of like 10 pictures. While building a larger dataset with more variety would have been great, I didn't have enough time. <br />
+One, I did not have enough energy to create a good dataset for the model to train on. Total losses were extremely low which leads me to think that I might have overfitted the dataset of like 10 pictures. While building a larger dataset with more variety would have been great, I didn't have enough time. As you can see, some elite enemies are not recognized despite being trained on other elite enemies. My proposed workaround would be to pull images from the Azur Lane wiki and train on those pictures but they're only sprites. Background might still throw AI off if I do that.<br /> 
 
 Two, my GPU sucks. I initially thought that a 1060 6GB might have been enough to tackle object detection with a very basic dataset. However, it seems that the object detection training is simply too intensive. 6GB of VRAM were always in use and my CPU had to take over some of the work. Often times, I would run into a resource exhausted error which would mean my hardware just couldn't keep up. This was even after I had reduced the batch size from 64 to 6. Buy me a 4090, please? 
 <br />
   
   literally me
+<p align = "center">
 ![Essex eating glue](https://user-images.githubusercontent.com/20429572/211165776-311bacd3-2e3b-4912-a3bd-7d46e9118e43.jpg)
+</p>
 
