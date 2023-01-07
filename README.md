@@ -17,6 +17,9 @@ There are template matching parts in this program and thus you will need to run 
   ![image](https://user-images.githubusercontent.com/20429572/211173767-6a77f9a6-b8cc-423f-9acb-93b00fd94ee2.png) 
   <br />
 
+## Results
+![Figure_1](https://user-images.githubusercontent.com/20429572/211174259-7a4d5cc3-a764-473a-8017-09a8c7b875a1.png)
+
 ## Problems
 
 While performing the object detection transfer learning training, I ran into two problems. <br />
