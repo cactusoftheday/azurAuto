@@ -1,12 +1,15 @@
 <h1>Azur Lane Auto<h1/>
-<h3>Made by cactusoftheday<h3 /><br />
+<h2>Made by cactusoftheday<br />
+  <h3>
 Fun time ≠ grinding time
 
 OH YEAHHHHHHHHHHHHHHHH BABY object detection for auto program soon
 or not
-
+<h2>
 Introduction
-
+<h4>
+As a player of Azur Lane, I am constantly on the lookout for new and powerful weapons to help me take on the toughest challenges in the game. These weapons can often be obtained by grinding through certain in-game events or challenges, but doing so can be time-consuming. At the same time, I am a huge fan of the beautiful and unique skins available for each character, and I always want to collect as many as possible. That's why I decided to create a Tensorflow model and an auto playing program to help me maximize my time in the game. With this program, I am able to progress through the game and unlock new skins and weapons more quickly, all while focusing on my other tasks. In this project, I will explain how I used Tensorflow and Python to create a program that can automatically play Azur Lane, allowing me to collect all of the best skins and gear for my shipgirls.
+<h2>
 Problems
 <h4>
 While performing the object detection transfer learning training, I ran into two problems. <br />
