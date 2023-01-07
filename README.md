@@ -30,7 +30,5 @@ Two, my GPU sucks. I initially thought that a 1060 6GB might have been enough to
 <br />
   
   literally me
-<p align = "center">
-  ![Essex eating glue](https://user-images.githubusercontent.com/20429572/211165776-311bacd3-2e3b-4912-a3bd-7d46e9118e43.jpg)
-</p>
+![Essex eating glue](https://user-images.githubusercontent.com/20429572/211165776-311bacd3-2e3b-4912-a3bd-7d46e9118e43.jpg)
 
