@@ -165,5 +165,4 @@ plt.figure()
 plt.imshow(image_np_with_detections)
 print('Done')
 plt.show()
-time.sleep(100)
 # sphinx_gallery_thumbnail_number = 2
