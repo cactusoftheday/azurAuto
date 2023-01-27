@@ -126,7 +126,7 @@ def find(frame, templateName, thresholdVar):
     w, h = template.shape[::-1]
     while True:
         threshold -= 0.01
-        print("finding")
+        #print("finding")
         res = cv2.matchTemplate(frame, template,cv2.TM_CCOEFF_NORMED)
         loc = np.where(res >= threshold)
         if(loc[0].size > 0 or threshold <= 0.6):
@@ -193,58 +193,6 @@ def switchFleet(frame):
     #print(len(buttonLoc))
     randomClickInBox(buttonLoc[0])
 
-def combatModule():
-    frame = capture_image()
-    switchFleet(frame) #switches to mob fleet
-    currentAmmoCount = 5
-    while True:
-        count = 0
-        if(currentAmmoCount < 1):
-            switchFleet(frame)
-            currentAmmoCount = 5
-        time.sleep(0.5)
-        frame = capture_image()
-        enemies = findEnemies(frame)
-        #print(enemies)
-        fleetLoc = buttonLoc(frame)
-        #print(fleetLoc)
-        enemyDistance = orderEnemies(enemies,fleetLoc)
-        #print(enemyDistance)
-        coord = findBoss(frame)
-        while True:
-            try:
-                print("boss corrdinates:",coord)
-                if(not coord):
-                    raise Exception("boss not found")
-                randomClickInBox(coord)
-                input("Awaiting user to input")
-                clickBattle(frame)
-                while True:
-                    frame = capture_image()
-                    try:
-                        continueFromBattleScreen(frame)
-                        time.sleep(1)
-                        break
-                    except:
-                        continue
-                return True
-            except:
-                print("enemy coords",enemyDistance[count].coords)
-                randomClickInBox(enemyDistance[count].coords)
-                clickBattle(frame)
-                currentAmmoCount -= 1
-                time.sleep(12)
-                break
-            count += 1
-        while True:
-            frame = capture_image()
-            try:
-                continueFromBattleScreen(frame)
-                time.sleep(1)
-
-                break
-            except:
-                continue
 
 def clickBattle(frame):
     buttonLoc = []
@@ -372,6 +320,7 @@ def campaignAuto(counter, wait):
     while count > 1:
         while True:
             time.sleep(waitTime)
+            retire()
             if(tryClick('continue')):
                 waitTime = wait
                 break
@@ -380,27 +329,31 @@ def campaignAuto(counter, wait):
         count -= 1
     #end function
 
+def retire():#please set your desired quick retire options before running campaign auto
+    if(not tryClick('sort')):
+        print('no retiring at this time')
+        return
+    time.sleep(1)
+    tryClick('quickRetire')
+    time.sleep(1)
+    tryClick('retireConfirm')
+    time.sleep(1)
+    randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
+    time.sleep(1)
+    randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
+    tryClick('disassemble')
+    time.sleep(1)
+    randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
+    time.sleep(1)
+    tryClick('retireCancel')
+    time.sleep(1)
+    tryClick('autosearch')
+
 if __name__ == "__main__":
     #sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
     #print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     time.sleep(1)
-    campaignAuto(3, 14) #hardmode auto
+    retire()
+    #campaignAuto(3, 14) #hardmode auto
+    #campaignAuto(3, 50) #fox mine auto
     #tryClick('continue')
-
-'''img_rgb = cv.imread('testPhotos/4.png')
-img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
-template = cv.imread('templates/LV snip.png', 0)
-w, h = template.shape[::-1]
-res = cv.matchTemplate(img_gray,template,cv.TM_CCOEFF_NORMED)
-threshold = 0.6 #60% threshold, could give false positives
-loc = np.where( res >= threshold)
-for pt in zip(*loc[::-1]):
-    cv.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
-cv.imwrite('res.png',img_rgb)
-
-
-if cv2.waitKey(1) & 0Xff == ord('q'):
-    return
-
-'''
-print("Hello world!")
