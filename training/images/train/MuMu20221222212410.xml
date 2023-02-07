@@ -1,7 +1,7 @@
 <annotation>
-	<folder>whole</folder>
+	<folder>train</folder>
 	<filename>MuMu20221222212410.png</filename>
-	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\whole\MuMu20221222212410.png</path>
+	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\train\MuMu20221222212410.png</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -17,7 +17,7 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>706</xmin>
+			<xmin>713</xmin>
 			<ymin>355</ymin>
 			<xmax>879</xmax>
 			<ymax>510</ymax>

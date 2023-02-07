@@ -1,7 +1,7 @@
 <annotation>
 	<folder>train</folder>
-	<filename>MuMu20221231203023.png</filename>
-	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\train\MuMu20221231203023.png</path>
+	<filename>MuMu20230206233915.png</filename>
+	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\train\MuMu20230206233915.png</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -12,27 +12,15 @@
 	</size>
 	<segmented>0</segmented>
 	<object>
-		<name>elite</name>
+		<name>enemy</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>1288</xmin>
-			<ymin>415</ymin>
-			<xmax>1461</xmax>
-			<ymax>649</ymax>
-		</bndbox>
-	</object>
-	<object>
-		<name>elite</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>1124</xmin>
-			<ymin>537</ymin>
-			<xmax>1312</xmax>
-			<ymax>785</ymax>
+			<xmin>342</xmin>
+			<ymin>240</ymin>
+			<xmax>470</xmax>
+			<ymax>324</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -41,34 +29,58 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>911</xmin>
-			<ymin>65</ymin>
-			<xmax>1066</xmax>
-			<ymax>208</ymax>
+			<xmin>455</xmin>
+			<ymin>321</ymin>
+			<xmax>582</xmax>
+			<ymax>409</ymax>
 		</bndbox>
 	</object>
 	<object>
 		<name>enemy</name>
 		<pose>Unspecified</pose>
-		<truncated>1</truncated>
+		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>1473</xmin>
-			<ymin>598</ymin>
-			<xmax>1600</xmax>
-			<ymax>785</ymax>
+			<xmin>258</xmin>
+			<ymin>695</ymin>
+			<xmax>408</xmax>
+			<ymax>810</ymax>
 		</bndbox>
 	</object>
 	<object>
-		<name>ally</name>
+		<name>enemy</name>
 		<pose>Unspecified</pose>
-		<truncated>1</truncated>
+		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>746</xmin>
-			<ymin>639</ymin>
-			<xmax>954</xmax>
-			<ymax>900</ymax>
+			<xmin>1048</xmin>
+			<ymin>85</ymin>
+			<xmax>1168</xmax>
+			<ymax>171</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>enemy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1154</xmin>
+			<ymin>3</ymin>
+			<xmax>1266</xmax>
+			<ymax>105</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>enemy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>496</xmin>
+			<ymin>13</ymin>
+			<xmax>607</xmax>
+			<ymax>107</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -77,10 +89,10 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>561</xmin>
-			<ymin>656</ymin>
-			<xmax>763</xmax>
-			<ymax>899</ymax>
+			<xmin>709</xmin>
+			<ymin>206</ymin>
+			<xmax>855</xmax>
+			<ymax>479</ymax>
 		</bndbox>
 	</object>
 </annotation>

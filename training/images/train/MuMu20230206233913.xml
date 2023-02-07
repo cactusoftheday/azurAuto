@@ -1,7 +1,7 @@
 <annotation>
 	<folder>train</folder>
-	<filename>MuMu20221230110327.png</filename>
-	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\train\MuMu20221230110327.png</path>
+	<filename>MuMu20230206233913.png</filename>
+	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\train\MuMu20230206233913.png</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -17,10 +17,10 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>925</xmin>
-			<ymin>292</ymin>
-			<xmax>1094</xmax>
-			<ymax>457</ymax>
+			<xmin>840</xmin>
+			<ymin>15</ymin>
+			<xmax>946</xmax>
+			<ymax>103</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -29,10 +29,46 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>763</xmin>
-			<ymin>524</ymin>
-			<xmax>947</xmax>
-			<ymax>704</ymax>
+			<xmin>727</xmin>
+			<ymin>84</ymin>
+			<xmax>839</xmax>
+			<ymax>171</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>enemy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>954</xmin>
+			<ymin>215</ymin>
+			<xmax>1080</xmax>
+			<ymax>324</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>enemy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>180</xmin>
+			<ymin>22</ymin>
+			<xmax>293</xmax>
+			<ymax>100</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>enemy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>118</xmin>
+			<ymin>321</ymin>
+			<xmax>224</xmax>
+			<ymax>407</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -41,34 +77,10 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>569</xmin>
-			<ymin>223</ymin>
-			<xmax>798</xmax>
-			<ymax>436</ymax>
-		</bndbox>
-	</object>
-	<object>
-		<name>ally</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>441</xmin>
-			<ymin>220</ymin>
-			<xmax>622</xmax>
-			<ymax>435</ymax>
-		</bndbox>
-	</object>
-	<object>
-		<name>ally</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>758</xmin>
-			<ymin>123</ymin>
-			<xmax>919</xmax>
-			<ymax>323</ymax>
+			<xmin>715</xmin>
+			<ymin>211</ymin>
+			<xmax>849</xmax>
+			<ymax>456</ymax>
 		</bndbox>
 	</object>
 </annotation>

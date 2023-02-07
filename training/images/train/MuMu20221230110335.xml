@@ -1,7 +1,7 @@
 <annotation>
-	<folder>whole</folder>
+	<folder>train</folder>
 	<filename>MuMu20221230110335.png</filename>
-	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\whole\MuMu20221230110335.png</path>
+	<path>C:\Users\kijij\PycharmProjects\azurAuto\training\images\train\MuMu20221230110335.png</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -33,6 +33,42 @@
 			<ymin>256</ymin>
 			<xmax>1127</xmax>
 			<ymax>417</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>ally</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>658</xmin>
+			<ymin>4</ymin>
+			<xmax>811</xmax>
+			<ymax>207</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>ally</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>791</xmin>
+			<ymin>4</ymin>
+			<xmax>963</xmax>
+			<ymax>211</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>ally</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>944</xmin>
+			<ymin>1</ymin>
+			<xmax>1063</xmax>
+			<ymax>94</ymax>
 		</bndbox>
 	</object>
 </annotation>
