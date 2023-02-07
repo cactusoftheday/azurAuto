@@ -117,52 +117,59 @@ def load_image_into_numpy_array(path):
       uint8 numpy array with shape (img_height, img_width, 3)
     """
     return np.array(Image.open(path))
-image_path = r'C:\Users\kijij\PycharmProjects\azurAuto\testPhotos\1.png'
-print('Running inference for {}... '.format(image_path), end='')
 
-image_np = load_image_into_numpy_array(image_path)
+def runInference():
+    image_path = r'C:\Users\kijij\PycharmProjects\azurAuto\testPhotos\5.png'
+    print('Running inference for {}... '.format(image_path), end='')
 
-# Things to try:
-# Flip horizontally
-# image_np = np.fliplr(image_np).copy()
+    image_np = load_image_into_numpy_array(image_path)
 
-# Convert image to grayscale
-image_np = np.tile(np.mean(image_np, 2, keepdims=True), (1, 1, 3)).astype(np.uint8)
+    # Things to try:
+    # Flip horizontally
+    # image_np = np.fliplr(image_np).copy()
 
-# The input needs to be a tensor, convert it using `tf.convert_to_tensor`.
-input_tensor = tf.convert_to_tensor(image_np)
-# The model expects a batch of images, so add an axis with `tf.newaxis`.
-input_tensor = input_tensor[tf.newaxis, ...]
+    # Convert image to grayscale
+    image_np = np.tile(np.mean(image_np, 2, keepdims=True), (1, 1, 3)).astype(np.uint8)
 
-input_tensor = np.expand_dims(image_np, 0)
-detections = detect_fn(input_tensor)
+    # The input needs to be a tensor, convert it using `tf.convert_to_tensor`.
+    input_tensor = tf.convert_to_tensor(image_np)
+    # The model expects a batch of images, so add an axis with `tf.newaxis`.
+    input_tensor = input_tensor[tf.newaxis, ...]
 
-# All outputs are batches tensors.
-# Convert to numpy arrays, and take index [0] to remove the batch dimension.
-# We're only interested in the first num_detections.
-num_detections = int(detections.pop('num_detections'))
-detections = {key: value[0, :num_detections].numpy()
-               for key, value in detections.items()}
-detections['num_detections'] = num_detections
+    input_tensor = np.expand_dims(image_np, 0)
+    detections = detect_fn(input_tensor)
 
-# detection_classes should be ints.
-detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
+    # All outputs are batches tensors.
+    # Convert to numpy arrays, and take index [0] to remove the batch dimension.
+    # We're only interested in the first num_detections.
+    num_detections = int(detections.pop('num_detections'))
+    detections = {key: value[0, :num_detections].numpy()
+                   for key, value in detections.items()}
+    detections['num_detections'] = num_detections
 
-image_np_with_detections = image_np.copy()
+    # detection_classes should be ints.
+    detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
 
-viz_utils.visualize_boxes_and_labels_on_image_array(
-      image_np_with_detections,
-      detections['detection_boxes'],
-      detections['detection_classes'],
-      detections['detection_scores'],
-      category_index,
-      use_normalized_coordinates=True,
-      max_boxes_to_draw=20,
-      min_score_thresh=.30,
-      agnostic_mode=False)
+    image_np_with_detections = image_np.copy()
 
-plt.figure()
-plt.imshow(image_np_with_detections)
-print('Done')
-plt.show()
-# sphinx_gallery_thumbnail_number = 2
+    viz_utils.visualize_boxes_and_labels_on_image_array(
+          image_np_with_detections,
+          detections['detection_boxes'],
+          detections['detection_classes'],
+          detections['detection_scores'],
+          category_index,
+          use_normalized_coordinates=True,
+          max_boxes_to_draw=20,
+          min_score_thresh=.30,
+          agnostic_mode=False)
+
+    plt.figure()
+    plt.imshow(image_np_with_detections)
+    print('Done')
+    for i in range(0, len(detections['detection_boxes'])):
+        print(detections['detection_boxes'][i])
+    plt.show()
+    # sphinx_gallery_thumbnail_number = 2
+
+if __name__ == "__main__":
+    runInference()

@@ -341,6 +341,9 @@ def retire():#please set your desired quick retire options before running campai
     randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
     time.sleep(1)
     randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
+    time.sleep(1)
+    tryClick('retireConfirm')
+    time.sleep(1)
     tryClick('disassemble')
     time.sleep(1)
     randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
@@ -352,8 +355,8 @@ def retire():#please set your desired quick retire options before running campai
 if __name__ == "__main__":
     #sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
     #print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-    time.sleep(1)
-    retire()
-    #campaignAuto(3, 14) #hardmode auto
-    #campaignAuto(3, 50) #fox mine auto
+    #retire()
+    campaignAuto(3, 14) #hardmode auto
+    #tryClick('autosearch')
+    #campaignAuto(5, 20) #fox mine auto
     #tryClick('continue')
