@@ -8,9 +8,10 @@ object detection for auto program soon <br>
 ## Introduction
 As a player of Azur Lane, I am constantly on the lookout for new and powerful weapons to help me take on the toughest challenges in the game. These weapons can often be obtained by grinding through certain in-game events or challenges, but doing so can be time-consuming. At the same time, I am a huge fan of the beautiful and unique skins available for each character, and I always want to collect as many as possible. That's why I decided to create a Tensorflow model and an auto playing program to help me maximize my time in the game. With this program, I am able to progress through the game and unlock new skins and weapons more quickly, all while focusing on my other tasks. In this project, I will explain how I used Tensorflow and Python to create a program that can automatically play Azur Lane, allowing me to collect all of the best skins and gear for my shipgirls.
 ## How to use this?
-  1. Clone the repository <br />
-  2. ~~download the checkpoints from this google drive folder~~ download exported model: https://drive.google.com/drive/u/0/folders/1L4siJJDkG-b_TKoAR-yAaV256Wp-9fhL  <br />
-  3. run main.py <br />
+  1) Clone the repository <br />
+  2) ~~download the checkpoints from this google drive folder~~ download exported model: https://drive.google.com/drive/u/0/folders/1L4siJJDkG-b_TKoAR-yAaV256Wp-9fhL  <br />
+  2.1) Adjust some settings such as xDiff and yDiff in main.py
+  3) run main.py <br />
 ### Conditions to use
 There are template matching parts in this program and thus you will need to run this on PC and in an emulator that has 1600 x 900 resolution, otherwise some of the template matching stuff won't work. Also you may need to run your IDE as administrator due to the fact that controlling the mouse with the program needs administrator privileges. I personally used mumu player.
 ## Graphs and stuff if you wanted to look at that <br />
