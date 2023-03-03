@@ -1,12 +1,7 @@
 import time
-
-import numpy
-
-from Enemy import Enemy
-from fleet import fleet
 import cv2
 import numpy as np
-import math
+import mss
 from matplotlib import pyplot as plt
 import pyautogui
 import mouse
@@ -15,20 +10,43 @@ import tensorflow as tf
 #need 2 taps and one confirm button to end battle
 # Resizes an image and maintains aspect ratio
 
-def capture_image(img_rgb):
-    img_gray = cv2.cvtColor(np.array(img_rgb),cv2.COLOR_BGR2GRAY)
+def screenshot():
+    with mss.mss() as sct:
+        monitor_number = 1
+        mon = sct.monitors[monitor_number]
+
+        # The screen part to capture
+        monitor = {
+            "top": mon["top"],  # 100px from the top
+            "left": mon["left"],  # 100px from the left
+            "width": mon["width"],
+            "height": mon["height"],
+            "mon": monitor_number,
+        }
+        #output = "sct-mon{mon}_{top}x{left}_{width}x{height}.png".format(**monitor)
+        #mss.tools.to_png(sct_img.rgb, sct_img.size, output=output)
+
+        return np.array(sct.grab(monitor))
+
+def capture_image(np_img_rgb):
+    img_gray = cv2.cvtColor(np_img_rgb,cv2.COLOR_BGR2GRAY)
     return img_gray
 
 def randomClickInBox(obj): #obj is a list [(x1,y1),(x2,y2)] literally a box
     #frame = capture_image()
     #cv2.rectangle(frame, (obj[0],obj[1]), (obj[2], obj[3]), (255,0,0), 2)
-    randx = randrange(obj[0][0],obj[1][0])
-    randy = randrange(obj[0][1],obj[1][1])
-    print(randx , randy)
+    #(0,0) is the top left corner of the main display so if you have a second display, in my case 1920x1080, to the left of your main display than
+    #my xDiff is -1920
+    #Ex. the top left corner of my secondary display will be (-1920, 0)
+    #yDiff exists if you have one of those funny vertical monitors but I don't have that so it's 0
+    xDiff = -1920 #change these so that the click may register properly on the emulator
+    yDiff = 0
+    randx = randrange(obj[0][0],obj[1][0]) - xDiff
+    randy = randrange(obj[0][1],obj[1][1]) - yDiff
+    print(randx, randy)
     mouse.move(randx,randy,True)
     mouse.click(button="left")
     #cv2.imwrite('res.png',frame)
-    #hi
 
 def findEnemies(frame):
     enemyLocation = []
@@ -47,76 +65,6 @@ def findEnemies(frame):
         print(enemy)'''
     #print(len(enemyLocation))
     return enemyLocation
-
-def buttonLoc(frame): #current frame needs to be passed in as this should be in nearestEnemy and nearestEnemy needs the frame as well
-    #must be careful in using this as moving to the enemy will also pop up the green locator
-    #print("got here!")
-    template = cv2.imread('templates/fleetLocator.png', 0)
-    w, h = template.shape[::-1]
-    buttonLoc = None
-    threshold = 1.0
-    loc = None
-    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= threshold)
-    while loc[0].size == 0 and threshold >= 0.8:
-        threshold -= 0.01
-        #print("running")
-        res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-        loc = np.where(res >= threshold)
-        #print(type(loc[0]))
-
-    #print("got here!")
-    buttonLoc = []
-    for pt in zip(*loc[::-1]): #this should be the proper adjustment for the marker
-        buttonLoc.append([pt[0]-25,pt[1]+225, pt[0] + 35, pt[1] + 250])
-        #cv2.rectangle(frame, (pt[0]-15,pt[1]+225), (pt[0] + 35, pt[1] + 250), (0, 0, 255), 2)
-    #print(len(buttonLoc))
-
-    #cv2.imwrite('res.png', frame) #comment this line when not debugging
-
-    return buttonLoc #may want to add the fleet's click box as a rectangle on to the image later on, could cause slower computation
-
-def myFunc(enemy):
-    return enemy.distance
-def sortE(enemyDistanceList): #sort enemies by nearest to closest
-    returnedList = sorted(enemyDistanceList, key = lambda enemy: enemy.distance) #sort by distance
-    return returnedList
-
-def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enemies should also have an unreachable state
-    #enemies are determined by how close they are by pythagorean theorem
-    #print("hewwowo oworldwo!")
-    enemyDistanceList = []
-    fleetX = fleetLoc[0][0]
-    fleetY = fleetLoc[0][1]
-    template = cv2.imread('templates/LV snip.png', 0)
-    w, h = template.shape[::-1]
-    #print(enemies)
-    for enemyCoord in enemies:
-        #print(enemyCoord)
-        enemyX = enemyCoord[0]
-        enemyY = enemyCoord[1]
-        coords = [enemyX,enemyY,enemyX+w,enemyY+h]
-        #print(coords)
-        tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
-        enemyDistanceList.append(Enemy(tempDistance,coords))
-    #print(enemyDistanceList)
-    enemyDistanceList = sortE(enemyDistanceList)
-    #print("successfully ordered enemies")
-    #print(enemyDistanceList)
-    return enemyDistanceList
-
-def nearestEnemy(allEnemies, buttonLoc): #only returns enemies that can be reached
-    enemyDistanceList = sortE(allEnemies)
-    count = 0
-    for enemy in enemyDistanceList:
-        if(enemy.reachable):
-            randomClickInBox(allEnemies[count]) #click closest and reachable enemy
-            break
-        count += 1
-
-def moveFleet(frame): #moves fleet towards closest enemy if unreachable in that turn
-    #this is too hard to think about so i'll do it later
-    print("hewowowowowo worldowowo")
 
 def find(frame, templateName, thresholdVar):
     #should return an array
@@ -139,160 +87,14 @@ def find(frame, templateName, thresholdVar):
         print(pt)
     return [pt,w,h]
 
-
-def findBoss(frame):
-    bossLocation = []
-    template = cv2.imread('templates/bossTemplate.png', 0)
-    w, h = template.shape[::-1]
-    threshold = 0.8  # 80% threshold, quite high but we can decrease from there
-    loc = np.array([])
-    print(type(loc))
-    while True:
-        threshold -= 0.01
-        print("running")
-        res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-        loc = np.where(res >= threshold)
-        print(loc)
-        if (loc[0].size > 0 or threshold <= 0.8):
-            break
-
-    if(loc[0].size == 0):
-        return False
-
-    for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
-        # print(type(pt))
-        bossLocation.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
-        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-
-    #cv2.imshow('result', frame)
-    return bossLocation
-
-def switchFleet(frame):
-    template = cv2.imread('templates/switch.png', 0)
-    w, h = template.shape[::-1]
-    threshold = 1.0
-    loc = None
-    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= threshold)
-    while loc[0].size == 0:
-        threshold -= 0.01
-        #print("running")
-        res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-        loc = np.where(res >= threshold)
-        #print(type(loc[0]))
-
-    #print("got here!")
-    buttonLoc = []
-    for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])  # this should be the proper adjustment for the marker
-        buttonLoc.append(temp)
-        #cv2.rectangle(frame, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-    #print(len(buttonLoc))
-    randomClickInBox(buttonLoc[0])
-
-
-def clickBattle(frame):
-    buttonLoc = []
-    template = cv2.imread('templates/LV snip.png', 0)
-    w, h = template.shape[::-1]
-    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.6  # 60% threshold, could give false positives
-    loc = np.where(res >= threshold)
-
-    for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
-        # print(type(pt))
-        buttonLoc.append(temp)
-        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-
-    #cv2.imshow('result', frame)
-    '''for enemy in enemyLocation:
-        print(enemy)'''
-    try:
-        randomClickInBox(buttonLoc[0])
-    except:
-        return False #could not find the button
-
-def continueFromBattleScreen(frame):
-    buttonLoc = []
-    template = cv2.imread('templates/touchToContinue.png', 0)
-    w, h = template.shape[::-1]
-    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.6  # 60% threshold, could give false positives
-    loc = np.where(res >= threshold)
-
-    for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
-        # print(type(pt))
-        buttonLoc.append(temp)
-        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-    timeCount = 0.2
-    randomClickInBox(buttonLoc[0])
-    time.sleep(0.5)
-    randomClickInBox(buttonLoc[0])  # gotta click twice
-    buttonLoc = []
-    template = cv2.imread('templates/confirmButton.png', 0)
-    w, h = template.shape[::-1]
-    while True:
-        try:
-            res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-            threshold = 0.8  # 60% threshold, could give false positives
-            loc = np.where(res >= threshold)
-            for pt in zip(*loc[::-1]):
-                temp = []
-                temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])
-                # print(type(pt))
-                buttonLoc.append(temp)
-                #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-            randomClickInBox(buttonLoc[0])
-            #cv2.imshow('result', frame)
-
-            break
-        except:
-            time.sleep(timeCount)
-            timeCount += 0.5
-            if(timeCount >= 3):
-                break
-
-    buttonLoc = []
-    template = cv2.imread('templates/confirmButton.png', 0)
-    w, h = template.shape[::-1]
-    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    threshold = 0.3  # 60% threshold, could give false positives
-    loc = np.where(res >= threshold)
-
-    for pt in zip(*loc[::-1]):
-        temp = []
-        temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])
-        # print(type(pt))
-        buttonLoc.append(temp)
-        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
-    time.sleep(1)
-    randomClickInBox(buttonLoc[0])
-    #cv2.imshow('result', frame)
-    '''for enemy in buttonLoc:
-        print(buttonLoc)'''
-
-def scroll(direction,holdTime): #hold time is in seconds
-    #should only take one second of scroll time to move around
-    pyautogui.keyDown(direction)
-    time.sleep(holdTime)
-    pyautogui.keyUp(direction)
-
 def click(templateName):
-    img_rgb = cv2.cvtColor(numpy.array(pyautogui.screenshot()), cv2.COLOR_RGB2BGR)
+    img_rgb = screenshot()
     img_gray = capture_image(img_rgb)
     location = find(img_gray, templateName, 0.9)
     print(location)
     box = [location[0], (location[0][0] + location[1], location[0][1] + location[2])]
-    cv2.rectangle(img_rgb, box[0], box[1], (0, 0, 255), 2)
-
-    cv2.imwrite('res.png', img_rgb)
+    #cv2.rectangle(img_rgb, box[0], box[1], (0, 0, 255), 2)
+    #cv2.imwrite('res.png', img_rgb)
     randomClickInBox(box)
 
 def tryClick(templateName):
@@ -349,7 +151,7 @@ def retire():#please set your desired quick retire options before running campai
     randomClickInBox([(1249, 830),(1300,850)]) #testing some random click to continue from retirement
     time.sleep(1)
     tryClick('retireCancel')
-    time.sleep(1)
+    time.sleep(2)
     tryClick('autosearch')
 
 if __name__ == "__main__":
@@ -358,5 +160,5 @@ if __name__ == "__main__":
     #retire()
     campaignAuto(3, 14) #hardmode auto
     #tryClick('autosearch')
-    #campaignAuto(5, 20) #fox mine auto
+    #campaignAuto(10, 20) #fox mine auto
     #tryClick('continue')

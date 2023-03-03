@@ -1,0 +1,204 @@
+def continueFromBattleScreen(frame):
+    buttonLoc = []
+    template = cv2.imread('templates/touchToContinue.png', 0)
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.6  # 60% threshold, could give false positives
+    loc = np.where(res >= threshold)
+
+    for pt in zip(*loc[::-1]):
+        temp = []
+        temp.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
+        # print(type(pt))
+        buttonLoc.append(temp)
+        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+    timeCount = 0.2
+    randomClickInBox(buttonLoc[0])
+    time.sleep(0.5)
+    randomClickInBox(buttonLoc[0])  # gotta click twice
+    buttonLoc = []
+    template = cv2.imread('templates/confirmButton.png', 0)
+    w, h = template.shape[::-1]
+    while True:
+        try:
+            res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+            threshold = 0.8  # 60% threshold, could give false positives
+            loc = np.where(res >= threshold)
+            for pt in zip(*loc[::-1]):
+                temp = []
+                temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])
+                # print(type(pt))
+                buttonLoc.append(temp)
+                #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+            randomClickInBox(buttonLoc[0])
+            #cv2.imshow('result', frame)
+
+            break
+        except:
+            time.sleep(timeCount)
+            timeCount += 0.5
+            if(timeCount >= 3):
+                break
+
+    buttonLoc = []
+    template = cv2.imread('templates/confirmButton.png', 0)
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.3  # 60% threshold, could give false positives
+    loc = np.where(res >= threshold)
+
+    for pt in zip(*loc[::-1]):
+        temp = []
+        temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])
+        # print(type(pt))
+        buttonLoc.append(temp)
+        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+    time.sleep(1)
+    randomClickInBox(buttonLoc[0])
+    #cv2.imshow('result', frame)
+    '''for enemy in buttonLoc:
+        print(buttonLoc)'''
+def clickBattle(frame):
+    buttonLoc = []
+    template = cv2.imread('templates/LV snip.png', 0)
+    w, h = template.shape[::-1]
+    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+    threshold = 0.6  # 60% threshold, could give false positives
+    loc = np.where(res >= threshold)
+
+    for pt in zip(*loc[::-1]):
+        temp = []
+        temp.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
+        # print(type(pt))
+        buttonLoc.append(temp)
+        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+
+    #cv2.imshow('result', frame)
+    '''for enemy in enemyLocation:
+        print(enemy)'''
+    try:
+        randomClickInBox(buttonLoc[0])
+    except:
+        return False #could not find the button
+def switchFleet(frame):
+    template = cv2.imread('templates/switch.png', 0)
+    w, h = template.shape[::-1]
+    threshold = 1.0
+    loc = None
+    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+    loc = np.where(res >= threshold)
+    while loc[0].size == 0:
+        threshold -= 0.01
+        #print("running")
+        res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+        loc = np.where(res >= threshold)
+        #print(type(loc[0]))
+
+    #print("got here!")
+    buttonLoc = []
+    for pt in zip(*loc[::-1]):
+        temp = []
+        temp.append([pt[0], pt[1], pt[0] + w, pt[1] + h])  # this should be the proper adjustment for the marker
+        buttonLoc.append(temp)
+        #cv2.rectangle(frame, (pt[0], pt[1]), (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+    #print(len(buttonLoc))
+    randomClickInBox(buttonLoc[0])
+
+def findBoss(frame):
+    bossLocation = []
+    template = cv2.imread('templates/bossTemplate.png', 0)
+    w, h = template.shape[::-1]
+    threshold = 0.8  # 80% threshold, quite high but we can decrease from there
+    loc = np.array([])
+    print(type(loc))
+    while True:
+        threshold -= 0.01
+        print("running")
+        res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+        loc = np.where(res >= threshold)
+        print(loc)
+        if (loc[0].size > 0 or threshold <= 0.8):
+            break
+
+    if(loc[0].size == 0):
+        return False
+
+    for pt in zip(*loc[::-1]):
+        temp = []
+        temp.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
+        # print(type(pt))
+        bossLocation.append([pt[0], pt[1], pt[0] + 50, pt[1] + 50])
+        #cv2.rectangle(frame, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+
+    #cv2.imshow('result', frame)
+    return bossLocation
+
+def buttonLoc(frame): #current frame needs to be passed in as this should be in nearestEnemy and nearestEnemy needs the frame as well
+    #must be careful in using this as moving to the enemy will also pop up the green locator
+    #print("got here!")
+    template = cv2.imread('templates/fleetLocator.png', 0)
+    w, h = template.shape[::-1]
+    buttonLoc = None
+    threshold = 1.0
+    loc = None
+    res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+    loc = np.where(res >= threshold)
+    while loc[0].size == 0 and threshold >= 0.8:
+        threshold -= 0.01
+        #print("running")
+        res = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+        loc = np.where(res >= threshold)
+        #print(type(loc[0]))
+
+    #print("got here!")
+    buttonLoc = []
+    for pt in zip(*loc[::-1]): #this should be the proper adjustment for the marker
+        buttonLoc.append([pt[0]-25,pt[1]+225, pt[0] + 35, pt[1] + 250])
+        #cv2.rectangle(frame, (pt[0]-15,pt[1]+225), (pt[0] + 35, pt[1] + 250), (0, 0, 255), 2)
+    #print(len(buttonLoc))
+
+    #cv2.imwrite('res.png', frame) #comment this line when not debugging
+
+    return buttonLoc #may want to add the fleet's click box as a rectangle on to the image later on, could cause slower computation
+
+def myFunc(enemy):
+    return enemy.distance
+def sortE(enemyDistanceList): #sort enemies by nearest to closest
+    returnedList = sorted(enemyDistanceList, key = lambda enemy: enemy.distance) #sort by distance
+    return returnedList
+
+def orderEnemies(enemies, fleetLoc): #Order enemies by closest to farthest, enemies should also have an unreachable state
+    #enemies are determined by how close they are by pythagorean theorem
+    #print("hewwowo oworldwo!")
+    enemyDistanceList = []
+    fleetX = fleetLoc[0][0]
+    fleetY = fleetLoc[0][1]
+    template = cv2.imread('templates/LV snip.png', 0)
+    w, h = template.shape[::-1]
+    #print(enemies)
+    for enemyCoord in enemies:
+        #print(enemyCoord)
+        enemyX = enemyCoord[0]
+        enemyY = enemyCoord[1]
+        coords = [enemyX,enemyY,enemyX+w,enemyY+h]
+        #print(coords)
+        tempDistance = math.dist([enemyX,enemyY],[fleetX,fleetY])
+        enemyDistanceList.append(Enemy(tempDistance,coords))
+    #print(enemyDistanceList)
+    enemyDistanceList = sortE(enemyDistanceList)
+    #print("successfully ordered enemies")
+    #print(enemyDistanceList)
+    return enemyDistanceList
+
+def nearestEnemy(allEnemies, buttonLoc): #only returns enemies that can be reached
+    enemyDistanceList = sortE(allEnemies)
+    count = 0
+    for enemy in enemyDistanceList:
+        if(enemy.reachable):
+            randomClickInBox(allEnemies[count]) #click closest and reachable enemy
+            break
+        count += 1
+
+def moveFleet(frame): #moves fleet towards closest enemy if unreachable in that turn
+    #this is too hard to think about so i'll do it later
+    print("hewowowowowo worldowowo")
