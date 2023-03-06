@@ -38,11 +38,11 @@ def randomClickInBox(obj): #obj is a list [(x1,y1),(x2,y2)] literally a box
     #(0,0) is the top left corner of the main display so if you have a second display, in my case 1920x1080, to the left of your main display than
     #my xDiff is -1920
     #Ex. the top left corner of my secondary display will be (-1920, 0)
-    #yDiff exists if you have one of those funny vertical monitors but I don't have that so it's 0
+    #yDiff exists if your laptop screens might be of different height such as my advertised 1920x1080 laptop is actually 1920x1270...
     xDiff = -1920 #change these so that the click may register properly on the emulator
-    yDiff = 0
-    randx = randrange(obj[0][0],obj[1][0]) - xDiff
-    randy = randrange(obj[0][1],obj[1][1]) - yDiff
+    yDiff = 190
+    randx = randrange(obj[0][0],obj[1][0]) + xDiff
+    randy = randrange(obj[0][1],obj[1][1]) + yDiff
     print(randx, randy)
     mouse.move(randx,randy,True)
     mouse.click(button="left")
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     #sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
     #print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     #retire()
-    campaignAuto(3, 14) #hardmode auto
+    #campaignAuto(3, 14) #hardmode auto
     #tryClick('autosearch')
-    #campaignAuto(10, 20) #fox mine auto
+    campaignAuto(10, 20) #fox mine auto
     #tryClick('continue')
